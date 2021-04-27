@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 
+// dierect to master
 
 //socket.io
 const http = require('http');
