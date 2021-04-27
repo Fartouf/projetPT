@@ -1,0 +1,9 @@
+<h2>Users list</h2>
+<div *ngFor="let user of users | async">
+  <div>
+    <b>Name: </b><span>{{ user.name }}</span><br />
+    <b>Last Name: </b><span>{{ user.lastName }}</span><br />
+    <b>Age: </b><span>{{ user.age }}</span>
+  </div>
+  <hr>
+</div>
