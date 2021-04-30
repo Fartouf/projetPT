@@ -12,6 +12,7 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
+  //unse r--> see interface
   getUsers() {
     return this.http.get<User[]>
     (this.serviceUrl + "/allPeople");

@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 
-//test 2
 
 //socket.io
 const http = require('http');
@@ -56,6 +55,34 @@ server.listen(3000, function () {
     console.log('Example app listening on port 3000! ')
 });
 
+
+// project TAXI 
+
+app.get('/allTaxis', function (req, res) {
+    con.query('SELECT * FROM Taxi', (error, result) => {
+        if (error) throw error;
+        res.json(result);
+    });
+});
+
+//var grid[][]
+
+function initTaxi(){
+    var taxis;
+    con.query('SELECT * FROM Taxi', (error, result) => {
+        if (error) throw error;
+
+        taxis = JSON.parse(JSON.stringify(result));
+
+        
+        console.log(taxis);
+    });
+}
+
+initTaxi();
+
+
+// Not app
 app.get('/allPeople', function (req, res) {
     con.query('SELECT * FROM person', (error, result) => {
         if (error) throw error;

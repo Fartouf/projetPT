@@ -5,12 +5,14 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { UserComponent } from './user/user.component';
 import { HttpClientModule } from "@angular/common/http";
+import { TaxiComponent } from './taxi/taxi.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    UserComponent
+    UserComponent,
+    TaxiComponent
   ],
   imports: [
     BrowserModule,
