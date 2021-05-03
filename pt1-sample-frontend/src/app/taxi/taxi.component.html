@@ -1,8 +1,8 @@
 <h2>Taxi list</h2>
+<p>Voici nos modeles dispoibles</p>
 <div *ngFor="let taxi of taxis | async">
   <div>
-    <b>modele : </b><span>{{ taxi.Modele }}</span><br />
-    
+    <b>{{taxi.Classe}} : </b><span>{{ taxi.Modele }}</span><br />
   </div>
   <hr>
 </div>

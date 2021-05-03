@@ -1,0 +1,12 @@
+<h2>Reservations</h2>
+
+<p>Veillez entrer les informations requises afin d'effectuer une reservation</p>
+
+<form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value)">
+    <label for="d">Point de depart :</label><br>
+    <input ngModel type="text" id="depart" name="d" value="Veillez entrer votre point de depart"><br>
+    <label ngModel for="a">Point d'arrivée :</label><br>
+    <input ngModel type="text" id="arrive" name="a" value="Veillez entrer votre point de d'arrive"><br><br>
+    <input ngModel type="submit" value="Submit">
+  </form> 
+  

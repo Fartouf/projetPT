@@ -65,21 +65,40 @@ app.get('/allTaxis', function (req, res) {
     });
 });
 
-//var grid[][]
 
-function initTaxi(){
+var grid = new Array(10);
+
+
+
+function initTaxi() {
     var taxis;
     con.query('SELECT * FROM Taxi', (error, result) => {
         if (error) throw error;
 
         taxis = JSON.parse(JSON.stringify(result));
 
-        
-        console.log(taxis);
+        var k = 0;
+        for (var i = 0; i < 10; i++) {
+            if (i % 2 == 0 ) {
+                grid[i] = taxis[k].N_taxi;
+                console.log(grid[i]);
+                k++;
+            }else {
+                grid[i] = 0;
+            }
+        }
     });
 }
 
 initTaxi();
+
+app.post('/addReservation', function (req, res) {
+    let postData = req.body;
+    con.query('INSERT INTO person SET ?', postData, (error, result) => {
+        if (error) throw error;
+        res.send(result);
+    });
+});
 
 
 // Not app
