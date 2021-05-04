@@ -20,7 +20,7 @@ export class ReservationComponent implements OnInit {
   //question reset form
   getValues(val: string){
     this.startAdress = val;
-    this.comService.getAdresseDepart();
+    this.comService.getAdresseDepart(this.startAdress);
     console.log(this.startAdress);
   }
 
