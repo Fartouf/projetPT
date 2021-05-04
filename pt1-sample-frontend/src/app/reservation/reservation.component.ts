@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ComServiceService } from './com-service.service';
 
 @Component({
   selector: 'app-reservation',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReservationComponent implements OnInit {
 
-  constructor() { }
+  constructor(private comService : ComServiceService) { }
 
   ngOnInit(): void {
     
@@ -19,6 +20,7 @@ export class ReservationComponent implements OnInit {
   //question reset form
   getValues(val: string){
     this.startAdress = val;
+    this.comService.getAdresseDepart();
     console.log(this.startAdress);
   }
 
