@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-
 @Component({
   selector: 'app-reservation',
   templateUrl: './reservation.component.html',
@@ -11,10 +10,16 @@ export class ReservationComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    
   }
 
+  //Question
+  startAdress : string | undefined;
+  
+  //question reset form
   getValues(val: string){
-    console.log(val);
+    this.startAdress = val;
+    console.log(this.startAdress);
   }
 
 }

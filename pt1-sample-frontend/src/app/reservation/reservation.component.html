@@ -2,11 +2,12 @@
 
 <p>Veillez entrer les informations requises afin d'effectuer une reservation</p>
 
-<form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value)">
-    <label for="d">Point de depart :</label><br>
-    <input ngModel type="text" id="depart" name="d" value="Veillez entrer votre point de depart"><br>
-    <label ngModel for="a">Point d'arrivée :</label><br>
-    <input ngModel type="text" id="arrive" name="a" value="Veillez entrer votre point de d'arrive"><br><br>
-    <input ngModel type="submit" value="Submit">
-  </form> 
-  
+
+<form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value)"> 
+  <div class="form-group">
+    <label for="depart">Point de depart : </label>
+    <input required ngModel name = "depart" #depart="ngModel" class="form-control" type="text" id="depart" value="Veillez entrer votre point de depart">
+    <div class="alert alert-danger" *ngIf="depart.touched && !depart.valid">L'adresse d'entrée est obligatoire!</div>
+  </div>
+  <button class="btn btn-primary" id = "submit">Submit</button>
+</form>
