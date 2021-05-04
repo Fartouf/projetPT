@@ -3,6 +3,24 @@ const express = require('express');
 const app = express();
 
 
+//Api de geolocalisation
+
+//Post du coté client
+app.post('/getLoacationStart', function(request, response) {
+    let postData = request.body;
+    console.log('POST bien reçu!')
+    console.log(postData)
+    response.writeHead(200, {'Content-Type': 'text/html'})
+    response.end('Salut from backend')
+  })
+
+app.get('/getNearTaxis', function(req, res) {
+    console.log("longitude : " + req.query.longitude);
+    console.log("latitude : " + req.query.latitude);
+    res.sendStatus(200);
+});
+
+
 //socket.io
 const http = require('http');
 const server = http.createServer(app);
