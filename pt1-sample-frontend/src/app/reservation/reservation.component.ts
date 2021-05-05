@@ -11,6 +11,7 @@ export class ReservationComponent implements OnInit {
   constructor(private comService : ComServiceService) { }
 
   ngOnInit(): void {
+   
     
   }
 
@@ -20,8 +21,9 @@ export class ReservationComponent implements OnInit {
   //question reset form
   getValues(val: string){
     this.startAdress = val;
-    this.comService.getAdresseDepart(this.startAdress);
-    console.log(this.startAdress);
+    this.comService.newReservation(this.startAdress).subscribe(res => console.log(res));
+
+   // console.log(this.startAdress);
   }
 
 }

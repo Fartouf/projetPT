@@ -1,6 +1,12 @@
 require('dotenv').config()
 const express = require('express');
 const app = express();
+app.use(express.json());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 
 //Api de geolocalisation
@@ -16,9 +22,10 @@ const app = express();
 */
 
 //get permettant de recuperer les données entré par l'utilisateur 
-app.get('/getAdresseDepart', function(req, res) {
-    console.log("adresseDepart : " + req.query.depart);
-    res.sendStatus(200);
+app.get('/reservation/:position', function(req, res) {
+    let data = req.params.position;
+    console.log("adresseDepart : "  +data);
+    res.json(data);
 });
 
 
@@ -28,12 +35,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
-app.use(express.json());
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+
 
 const mysql = require('mysql');
 

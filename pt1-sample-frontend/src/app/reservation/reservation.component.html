@@ -3,7 +3,7 @@
 <p>Veillez entrer les informations requises afin d'effectuer une reservation</p>
 
 
-<form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value)"> 
+<form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value.depart)"> 
   <div class="form-group">
     <label for="depart">Point de depart : </label>
     <input required ngModel name = "depart" #depart="ngModel" class="form-control" type="text" id="depart" value="Veillez entrer votre point de depart">
