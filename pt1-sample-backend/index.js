@@ -1,26 +1,12 @@
 require('dotenv').config()
 const express = require('express');
 const app = express();
-
-
-//Api de geolocalisation
-
-//Post du coté client Inutile : on utilise un get pour recuperer les données 
-/*app.post('/getLoacationStart', function(request, response) {
-    let postData = request.body;
-    console.log('POST bien reçu!')
-    console.log(postData)
-    response.writeHead(200, {'Content-Type': 'text/html'})
-    response.end('Salut from backend')
-  })
-*/
-
-//get permettant de recuperer les données entré par l'utilisateur 
-app.get('/getAdresseDepart', function(req, res) {
-    console.log("adresseDepart : " + req.query.depart);
-    res.sendStatus(200);
+app.use(express.json());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
-
 
 //socket.io
 const http = require('http');
@@ -28,12 +14,23 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
-app.use(express.json());
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+//Api de geolocalisation
+
+
+
+var adresseDepart = "";
+
+//get permettant de recuperer les données entré par l'utilisateur 
+app.get('/getAdresseDepart', function(req, res) {
+    adresseDepart = req.query.depart;
+    console.log(adresseDepart);
+    res.json("ok");
 });
+
+
+
+
+
 
 const mysql = require('mysql');
 
