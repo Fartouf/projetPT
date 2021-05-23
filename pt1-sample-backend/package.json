@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node_modules/.bin/nodemon index.js",
+        "startTaxi": "node_modules/.bin/nodemon taxi.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -14,10 +15,17 @@
     "author": "Ashley Caselli",
     "license": "ISC",
     "dependencies": {
+        "axios": "^0.21.1",
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "googleapis": "^73.0.0",
         "mysql": "^2.18.1",
         "nodemon": "^2.0.7",
-        "socket.io": "^4.0.1"
+        "query-string": "^7.0.0",
+        "request": "^2.88.2",
+        "socket.io": "^4.0.1",
+        "url-parse": "^1.5.1"
     }
 }

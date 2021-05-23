@@ -27,10 +27,7 @@ app.get('/getAdresseDepart', function(req, res) {
     res.json("ok");
 });
 
-
-
-
-
+//
 
 const mysql = require('mysql');
 
