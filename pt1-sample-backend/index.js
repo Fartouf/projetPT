@@ -74,15 +74,15 @@ function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
     switch(classe){
 
         case '1':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.5;
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.5 + prixPriseEnCharge;
             return prix;
 
         case '2':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.2;
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.2 + prixPriseEnCharge;
             return prix;
 
         case '3':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef));
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef)) + prixPriseEnCharge;
             return prix;
 
         default:
