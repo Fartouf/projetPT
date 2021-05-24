@@ -87,6 +87,7 @@ function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
 
         default:
             console.log("erreur au niveau du prix")
+            
 
     }
 }
@@ -94,8 +95,6 @@ function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
 
 
 //Api de geolocalisation
-
-
 
 var adresseDepart = "";
 
