@@ -14,20 +14,21 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
-//Api de geolocalisation
+//socket.io
+io.on('connection', socket => {
+    console.log('New client connected')
+    socket.on('new-message', (message) => { //event
+    console.log(message);
+    io.emit('new-message', message);
+    });
+    socket.on('disconnect', () => {
+    console.log('user disconnected') })
+    });
 
-
-
-var adresseDepart = "";
-
-//get permettant de recuperer les données entré par l'utilisateur 
-app.get('/getAdresseDepart', function(req, res) {
-    adresseDepart = req.query.depart;
-    console.log(adresseDepart);
-    res.json("ok");
+server.listen(3000, function () {
+    console.log('Example app listening on port 3000! ')
 });
 
-//
 
 const mysql = require('mysql');
 
@@ -53,20 +54,60 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-//socket.io
-io.on('connection', socket => {
-    console.log('New client connected')
-    socket.on('new-message', (message) => { //event
-    console.log(message);
-    io.emit('new-message', message);
-    });
-    socket.on('disconnect', () => {
-    console.log('user disconnected') })
-    });
+// project TAXI //
 
-server.listen(3000, function () {
-    console.log('Example app listening on port 3000! ')
+//Calcul de prix
+
+var prixPriseEnCharge = 3;
+var prixParBagage = 2;
+var prixParKm = 2;
+
+function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
+
+    var prix = 0;
+    var prixCoef = 1;
+
+    if(heureTrajet >= 18 && heureTrajet <= 8){
+        prixCoef = 1.2;
+    }
+
+    switch(classe){
+
+        case '1':
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.5;
+            return prix;
+
+        case '2':
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.2;
+            return prix;
+
+        case '3':
+            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef));
+            return prix;
+
+        default:
+            console.log("erreur au niveau du prix")
+
+    }
+}
+
+
+
+//Api de geolocalisation
+
+
+
+var adresseDepart = "";
+
+//get permettant de recuperer les données entré par l'utilisateur 
+
+app.get('/getAdresseDepart', function(req, res) {
+    adresseDepart = req.query.depart;
+    console.log(adresseDepart);
+    res.json("ok");
 });
+
+
 
 
 // project TAXI 
