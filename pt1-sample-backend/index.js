@@ -18,12 +18,13 @@ const io = new Server(server);
 io.on('connection', socket => {
     console.log('New client connected')
     socket.on('new-message', (message) => { //event
-    console.log(message);
-    io.emit('new-message', message);
+        console.log(message);
+        io.emit('new-message', message);
     });
     socket.on('disconnect', () => {
-    console.log('user disconnected') })
-    });
+        console.log('user disconnected')
+    })
+});
 
 server.listen(3000, function () {
     console.log('Example app listening on port 3000! ')
@@ -62,32 +63,32 @@ var prixPriseEnCharge = 3;
 var prixParBagage = 2;
 var prixParKm = 2;
 
-function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
+function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
 
     var prix = 0;
     var prixCoef = 1;
 
-    if(heureTrajet >= 18 && heureTrajet <= 8){
+    if (heureTrajet >= 18 && heureTrajet <= 8) {
         prixCoef = 1.2;
     }
 
-    switch(classe){
+    switch (classe) {
 
         case '1':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.5 + prixPriseEnCharge;
+            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) * 1.5 + prixPriseEnCharge;
             return prix;
 
         case '2':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef))*1.2 + prixPriseEnCharge;
+            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) * 1.2 + prixPriseEnCharge;
             return prix;
 
         case '3':
-            prix = (nbBagages * prixParBagage + nbPassagers*( nbKm*prixParKm*prixCoef)) + prixPriseEnCharge;
+            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) + prixPriseEnCharge;
             return prix;
 
         default:
             console.log("erreur au niveau du prix")
-            
+
 
     }
 }
@@ -96,15 +97,85 @@ function  price( nmKM, classe, nbBagages, nbPassagers, heureTrajet){
 
 //Api de geolocalisation
 
-var adresseDepart = "";
 
 //get permettant de recuperer les données entré par l'utilisateur 
 
-app.get('/getAdresseDepart', function(req, res) {
-    adresseDepart = req.query.depart;
-    console.log(adresseDepart);
-    res.json("ok");
+async function getCoordinates(depart, arrival) {
+    let coordDe = await getCoordinate(depart);
+    let coordAr = await getCoordinate(depart);
+    return {
+        arrival: {
+            text: depart,
+            coordinates: {
+                lat: coordDe.lat,
+                lon: coordDe.lon
+            }
+        },
+        depart: {
+            text: depart,
+            coordinates: {
+                lat: coordAr.lat,
+                lon: coordAr.lon
+
+            }
+
+        }
+    };
+
+}
+
+
+async function getCoordinate(address) {
+
+    return new Promise(resolve => {
+        http.get('http://api.positionstack.com/v1/forward?access_key=a4bbcf52bef8635021daef9f0ab571da&query=' + address, res => {
+
+            let data = [];
+            let coord = {};
+
+            res.on('data', chunk => {
+                data.push(chunk);
+            });
+
+            res.on('end', () => {
+
+                const users = JSON.parse(Buffer.concat(data).toString());
+                coord.lat = users.data[0].latitude;
+                coord.lon = users.data[0].longitude;
+                resolve(coord);
+
+            });
+        }).on('error', err => {
+            console.log('Error: ', err.message);
+        });
+    });
+
+}
+
+
+
+
+app.post('/getData', function (req, res) {
+    depart = req.body.depart;
+    arrival = req.body.arrive;
+    
+    //res.send(getCoordinates(depart, arrival));
+    getCoordinates(depart, arrival).then(obj => {
+        //console.log(obj);
+        res.send(obj);
+        
+        
+        //distance? getDistance();
+        //calculate the price? calculate()
+        //store to DB reservation
+        
+
+    });
+
+
+   // res.json("ok");
 });
+
 
 
 
@@ -122,7 +193,7 @@ app.get('/allTaxis', function (req, res) {
 var grid = new Array(10);
 
 
-
+/*
 function initTaxi() {
     var taxis;
     con.query('SELECT * FROM Taxi', (error, result) => {
@@ -132,11 +203,11 @@ function initTaxi() {
 
         var k = 0;
         for (var i = 0; i < 10; i++) {
-            if (i % 2 == 0 ) {
+            if (i % 2 == 0) {
                 grid[i] = taxis[k].N_taxi;
                 console.log(grid[i]);
                 k++;
-            }else {
+            } else {
                 grid[i] = 0;
             }
         }
@@ -144,6 +215,7 @@ function initTaxi() {
 }
 
 initTaxi();
+*/
 
 app.post('/addReservation', function (req, res) {
     let postData = req.body;

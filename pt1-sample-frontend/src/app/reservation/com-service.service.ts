@@ -12,9 +12,9 @@ export class ComServiceService {
   }
 
   //envoyer l'adresse
-  getAdresseDepart(adresseDepart : string) {
-    console.log("test");
-    return this.http.get<any[]>
-    (this.serviceUrl + "/getAdresseDepart?depart=" + adresseDepart);
+  getAdresseDepart(data : any) {
+    console.log(data);
+    return this.http.post<any[]>
+    (this.serviceUrl + "/getData", data);
   }
 }
