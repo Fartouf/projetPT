@@ -29,3 +29,11 @@
 .toolbar #youtube-logo:hover {
   opacity: 0.8;
 }
+
+a {
+  background-color: #5799db;
+  color: #ffffff;
+  text-align: right;
+  padding: 3px ;
+  margin: 10px;
+ }

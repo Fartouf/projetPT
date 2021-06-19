@@ -21,7 +21,6 @@ export class ReservationComponent implements OnInit {
   //question reset form
   getValues(val: object){
     this.comService.getAdresseDepart(val).subscribe(res => console.log(res));
-    
   }
 
 }

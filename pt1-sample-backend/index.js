@@ -1,5 +1,9 @@
 require('dotenv').config()
 const express = require('express');
+
+// geolib 
+const geolib = require('geolib');
+
 const app = express();
 app.use(express.json());
 app.use(function (req, res, next) {
@@ -57,6 +61,43 @@ app.get('/', function (req, res) {
 
 // project TAXI //
 
+//Simulation de la position des taxis et disponibilité
+
+var taxiPosition = {};
+var taxiDispo = {};
+
+function initTaxi() {
+    var taxis;
+    con.query('SELECT * FROM Taxi', (error, result) => {
+        if (error) throw error;
+
+        taxis = JSON.parse(JSON.stringify(result));
+
+        for (const element of taxis) {
+
+            var taxiNb = element.N_taxi;
+
+            var taxiKey = "Taxi_" + taxiNb;
+            console.log(taxiKey);
+
+            taxiPosition[taxiKey] = {
+                lon : 6.1408549908111665,
+                lat : 46.194384746564715
+            };
+            taxiDispo[taxiKey] = {
+                taxiDispo : true
+            };
+            
+          }
+          console.log(taxiPosition);
+          console.log(taxiDispo);
+    });
+}
+
+initTaxi();
+
+
+
 //Calcul de prix
 
 var prixPriseEnCharge = 3;
@@ -93,10 +134,16 @@ function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
     }
 }
 
+// calcul de distance etre le point d'arrivé et de depart
 
+function trajetDis(depart, arrival){
+  
+    return getDistance(
+        { latitude: 51.5103, longitude: 7.49347 },
+        { latitude: "51° 31' N", longitude: "7° 28' E" }
+    );
 
-//Api de geolocalisation
-
+}
 
 //get permettant de recuperer les données entré par l'utilisateur 
 
@@ -128,7 +175,7 @@ async function getCoordinates(depart, arrival) {
 async function getCoordinate(address) {
 
     return new Promise(resolve => {
-        http.get('http://api.positionstack.com/v1/forward?access_key=a4bbcf52bef8635021daef9f0ab571da&query=' + address, res => {
+        http.get('http://api.positionstack.com/v1/forward?access_key=f67b3109ab6c60c25caf85b2ffbd1d3c&query=' + address, res => {
 
             let data = [];
             let coord = {};
@@ -189,33 +236,7 @@ app.get('/allTaxis', function (req, res) {
     });
 });
 
-
-var grid = new Array(10);
-
-
-/*
-function initTaxi() {
-    var taxis;
-    con.query('SELECT * FROM Taxi', (error, result) => {
-        if (error) throw error;
-
-        taxis = JSON.parse(JSON.stringify(result));
-
-        var k = 0;
-        for (var i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                grid[i] = taxis[k].N_taxi;
-                console.log(grid[i]);
-                k++;
-            } else {
-                grid[i] = 0;
-            }
-        }
-    });
-}
-
-initTaxi();
-*/
+//
 
 app.post('/addReservation', function (req, res) {
     let postData = req.body;
