@@ -13,6 +13,7 @@ import { TaxiComponent } from './taxi/taxi.component';
 import { ReservationComponent } from './reservation/reservation.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
+import { DisponibiliteComponent } from './disponibilite/disponibilite.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { AppRoutingModule } from './app-routing.module';
     HeaderComponent,
     UserComponent,
     TaxiComponent,
-    ReservationComponent
+    ReservationComponent,
+    DisponibiliteComponent
   ],
   imports: [
     BrowserModule,
