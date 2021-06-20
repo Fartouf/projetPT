@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DispService } from './disp.service';
 
 @Component({
   selector: 'app-disponibilite',
@@ -7,9 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DisponibiliteComponent implements OnInit {
 
-  constructor() { }
+  constructor(private dispService : DispService) { }
 
   ngOnInit(): void {
+  }
+
+   disponibilite : any = [];
+
+  getDisp(val: object){
+
+    this.disponibilite = [];
+    this.dispService.getDispo(val).subscribe(res => this.disponibilite.push(res));
+    console.log(this.disponibilite);
   }
 
 }

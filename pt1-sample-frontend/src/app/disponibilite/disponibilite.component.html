@@ -3,24 +3,32 @@
 <p>Veillez entrer les informations correspondantes au disponibilitées qui vous interessent</p>
 
 
-<form #disponibilityForm = "ngForm"  >
+<form #disponibilityForm = "ngForm" (ngSubmit) = "getDisp(disponibilityForm.value)" >
   <div class="form-group">
 
     <label for="ClassSelect">Veiller selectionner la classe que vous voulez</label>
-    <select class="form-control" id="ClassSelect">
+    <select required ngModel name = "ClassSelect" #ClassSelect="ngModel" class="form-control" type="text" id="ClassSelect" >
       <option>1</option>
       <option>2</option>
       <option>3</option>
     </select>
 
     <label for="BagagesNb">Veiller le nombre de bagages</label>
-    <select class="form-control" id="BagagesNb">
+    <select required ngModel name = "BagagesNb" #BagagesNb="ngModel" class="form-control" type="text" id="BagagesNb">
+      <option>0</option>
       <option>1</option>
       <option>2</option>
       <option>3</option>
     </select>
 
-
   </div>
   <button class="btn btn-primary" id = "submit">Submit</button>
 </form>
+<br>
+<br>
+<br>
+<div *ngFor="let taxi of disponibilite[0]">
+  <div>Classe : <b>{{taxi.Classe}} : </b> Modele : <span>{{ taxi.Modele }}</span><br />
+  </div>
+  <hr>
+</div>

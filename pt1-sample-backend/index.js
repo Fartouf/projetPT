@@ -224,8 +224,34 @@ app.post('/getData', function (req, res) {
 });
 
 
+//verification des disponibilitées
 
 
+app.post('/getDispo', function (req, res) {
+    classe = req.body.ClassSelect;
+    BagagesNb = req.body.BagagesNb;
+
+    con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage='" + BagagesNb + "'", (error, result) => {
+        if (error) throw error;
+        var resultArray = Object.values(JSON.parse(JSON.stringify(result)));
+        var FinalResult = [];
+
+    for (const element of resultArray) {
+
+        var taxiKeyverif = "Taxi_" + element.N_taxi;
+      
+        if(taxiDispo[taxiKeyverif].taxiDispo){
+            console.log(taxiKeyverif);
+            console.log(taxiDispo[taxiKeyverif]);
+            FinalResult.push(element);
+        }
+    }
+        res.json(FinalResult);
+    });
+    
+    
+   // res.json("ok");
+});
 
 // project TAXI 
 
