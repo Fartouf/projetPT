@@ -105,7 +105,7 @@ var prixParBagage = 2;
 var prixParKm = 2;
 
 function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
-
+    console.log(nmKM);
     var prix = 0;
     var prixCoef = 1;
 
@@ -115,16 +115,16 @@ function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
 
     switch (classe) {
 
-        case '1':
-            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) * 1.5 + prixPriseEnCharge;
+        case 1:
+            prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) * 1.5 + prixPriseEnCharge;
             return prix;
 
-        case '2':
-            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) * 1.2 + prixPriseEnCharge;
+        case 2:
+            prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) * 1.2 + prixPriseEnCharge;
             return prix;
 
-        case '3':
-            prix = (nbBagages * prixParBagage + nbPassagers * (nbKm * prixParKm * prixCoef)) + prixPriseEnCharge;
+        case 3:
+            prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) + prixPriseEnCharge;
             return prix;
 
         default:
@@ -134,38 +134,50 @@ function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
     }
 }
 
-// calcul de distance etre le point d'arrivé et de depart
+//API de calcul d'itineraire pour le trajet
 
-function trajetDis(depart, arrival){
-  
-    return getDistance(
-        { latitude: 51.5103, longitude: 7.49347 },
-        { latitude: "51° 31' N", longitude: "7° 28' E" }
-    );
+async function itineraire(longitudeDepart, latitudeDepart,longitudeArrive,latitudeArrive) {
 
+    return new Promise(resolve => {
+        http.get('http://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248197905c175e845e4aa28a0db9be5953c&start=' +longitudeDepart+ ',' + latitudeDepart + '&end=' + longitudeArrive + ',' +latitudeArrive , res => {
+
+            let data = [];
+
+            res.on('data', chunk => {
+                data.push(chunk);
+            });
+            res.on('end', () => {
+                const trajet = JSON.parse(Buffer.concat(data).toString());
+                var info = trajet.features[0].properties.summary;
+                resolve(info);
+            });
+        }).on('error', err => {
+            console.log('Error: ', err.message);
+        });
+    });
 }
 
 //get permettant de recuperer les données entré par l'utilisateur 
 
 async function getCoordinates(depart, arrival) {
     let coordDe = await getCoordinate(depart);
-    let coordAr = await getCoordinate(depart);
+    let coordAr = await getCoordinate(arrival);
     return {
-        arrival: {
+        depart: {
             text: depart,
             coordinates: {
                 lat: coordDe.lat,
                 lon: coordDe.lon
+
             }
+
         },
-        depart: {
-            text: depart,
+        arrival: {
+            text: arrival,
             coordinates: {
                 lat: coordAr.lat,
                 lon: coordAr.lon
-
             }
-
         }
     };
 
@@ -190,42 +202,135 @@ async function getCoordinate(address) {
                 coord.lat = users.data[0].latitude;
                 coord.lon = users.data[0].longitude;
                 resolve(coord);
-
             });
         }).on('error', err => {
             console.log('Error: ', err.message);
         });
     });
+}
+
+// calcul de distance etre le point d'arrivé et de depart
+
+function getDist(longitudeDepart, latitudeDepart, longitudeArrive, latitudeArrive) {
+    return geolib.getDistance(
+        { latitude: latitudeDepart, longitude: longitudeDepart },
+        { latitude: latitudeArrive, longitude: longitudeArrive }
+    );
 
 }
 
+//choix du taxi le plus proche
 
+function taxiselect(taxiPosition, depart) {
 
+    var minDist;
+    var taxiNb;
+
+}
 
 app.post('/getData', function (req, res) {
+    var IDReservation;
     depart = req.body.depart;
     arrival = req.body.arrive;
+    classe = parseInt(req.body.ClassSelect);
+    BagagesNb = parseInt(req.body.BagagesNb);
+    personnesNb = parseInt(req.body.personnesNb);
     
+
     //res.send(getCoordinates(depart, arrival));
     getCoordinates(depart, arrival).then(obj => {
-        //console.log(obj);
-        res.send(obj);
-        
-        
-        //distance? getDistance();
+        dataCoordsTrajet = obj;
+        console.log(dataCoordsTrajet);
+
+        longitudeDepart = obj.depart.coordinates.lon;
+        latitudeDepart = obj.depart.coordinates.lat;
+
+        longitudeArrive = obj.arrival.coordinates.lon;
+        latitudeArrive = obj.arrival.coordinates.lat;
+
+        itineraire(longitudeDepart, latitudeDepart, longitudeArrive, latitudeArrive).then(obj => {
+            var FinalResult = [];
+            var itineraire;
+
+            itineraire = obj;
+
+            con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage='" + BagagesNb + "'", (error, result) => {
+
+                var taxiKeyverif;
+
+                if (error) throw error;
+                var resultArray = Object.values(JSON.parse(JSON.stringify(result)));
+
+                for (const element of resultArray) {
+
+                    taxiKeyverif = "Taxi_" + element.N_taxi;
+
+                    if (taxiDispo[taxiKeyverif].taxiDispo) {
+                        FinalResult.push(element);
+                    }
+                }
+
+                var minDist = 1000;
+                var taxiSelectId;
+                for (const element of resultArray) {
+                    var temp = [];
+                    taxiKeyverif = "Taxi_" + element.N_taxi;
+                    console.log
+
+                    if (minDist > getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000) {
+                        
+                        taxiSelectId = element.N_taxi;
+                        minDist = getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000;
+                    }
+
+                }
+                console.log(taxiSelectId);
+
+                var IdClient = Math.floor(Math.random() * 1000) + 1;
+                IDReservation = Math.floor(Math.random() * 1000) + 1;
+                distanceTraj = obj.distance/1000;
+                var d = new Date();
+                var n = d.getHours();
+
+                console.log(classe);
+
+                prixTrajet = price(distanceTraj,classe,BagagesNb,personnesNb,n);
+                console.log(IdClient);
+                let postData = {};
+
+                postData.N_taxi = taxiSelectId;
+                postData.N_idclient = 1005;
+                postData.N_reservation = IDReservation;
+                postData.Nb_pers_transport = personnesNb;
+                postData.Nb_de_bagages = BagagesNb;
+                postData.Prix = prixTrajet;
+
+                
+                console.log(postData);
+
+
+                con.query('INSERT INTO Réservation_course SET ?', postData, (error, result) => {
+                    if (error) throw error;
+                });
+
+            });
+            console.log(obj);
+
+        });
+
+
         //calculate the price? calculate()
         //store to DB reservation
-        
+
 
     });
 
 
-   // res.json("ok");
+    // res.json("ok");
 });
 
 
 //verification des disponibilitées
-
 
 app.post('/getDispo', function (req, res) {
     classe = req.body.ClassSelect;
@@ -241,16 +346,11 @@ app.post('/getDispo', function (req, res) {
         var taxiKeyverif = "Taxi_" + element.N_taxi;
       
         if(taxiDispo[taxiKeyverif].taxiDispo){
-            console.log(taxiKeyverif);
-            console.log(taxiDispo[taxiKeyverif]);
             FinalResult.push(element);
         }
     }
         res.json(FinalResult);
     });
-    
-    
-   // res.json("ok");
 });
 
 // project TAXI 
