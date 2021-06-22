@@ -270,63 +270,79 @@ app.post('/getData', function (req, res) {
                     }
                 }
 
-                var minDist = 1000;
-                var taxiSelectId;
-                for (const element of resultArray) {
-                    var temp = [];
-                    taxiKeyverif = "Taxi_" + element.N_taxi;
-                    console.log
+                console.log(FinalResult);
 
-                    if (minDist > getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000) {
-                        
-                        taxiSelectId = element.N_taxi;
-                        minDist = getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000;
+                if(FinalResult.length === 0){
+                    InfoCli = [{
+                        Idr : "pas de taxi disponible",
+                        Idc : "pas de taxi disponible"
+                    }]
+                    res.json(InfoCli);
+                   
+                }else{
+                    var minDist = 1000;
+                    var taxiSelectId;
+                    for (const element of FinalResult) {
+                        var temp = [];
+                        taxiKeyverif = "Taxi_" + element.N_taxi;
+                        console.log
+    
+                        if (minDist > getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000) {
+                            
+                            taxiSelectId = element.N_taxi;
+                            minDist = getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000;
+                        }
+    
                     }
+                    console.log(taxiSelectId);
+    
+                    var IdClient = Math.floor(Math.random() * 1000) + 1;
+                    IDReservation = Math.floor(Math.random() * 1000) + 1;
+                    distanceTraj = obj.distance/1000;
+                    var d = new Date();
+                    var n = d.getHours();
+    
+                    prixTrajet = price(distanceTraj,classe,BagagesNb,personnesNb,n);
+                    
+                    let postDataCli = {};
+                    
+                    postDataCli.N_idclient = IdClient;
+                    postDataCli.nom = req.body.nom;
+                    postDataCli.prenom = req.body.prenom;
+                    postDataCli.age = parseInt(req.body.age);
 
+                    con.query('INSERT INTO Client SET ?', postDataCli, (error, result) => {
+                        if (error) throw error;
+                    });
+
+                    let postData = {};
+    
+                    postData.N_taxi = taxiSelectId;
+                    postData.N_idclient = IdClient;
+                    postData.N_reservation = IDReservation;
+                    postData.Nb_pers_transport = personnesNb;
+                    postData.Nb_de_bagages = BagagesNb;
+                    postData.Prix = prixTrajet;
+    
+                    
+                    console.log(postData);
+    
+                    con.query('INSERT INTO Réservation_course SET ?', postData, (error, result) => {
+                        if (error) throw error;
+                        taxiDispo["Taxi_" + taxiSelectId].taxiDispo = false;
+                    });
+
+                    InfoCli = [{
+                        Idr : IDReservation,
+                        Idc : IdClient
+                    }]
+                    res.json(InfoCli);
                 }
-                console.log(taxiSelectId);
-
-                var IdClient = Math.floor(Math.random() * 1000) + 1;
-                IDReservation = Math.floor(Math.random() * 1000) + 1;
-                distanceTraj = obj.distance/1000;
-                var d = new Date();
-                var n = d.getHours();
-
-                console.log(classe);
-
-                prixTrajet = price(distanceTraj,classe,BagagesNb,personnesNb,n);
-                console.log(IdClient);
-                let postData = {};
-
-                postData.N_taxi = taxiSelectId;
-                postData.N_idclient = 1005;
-                postData.N_reservation = IDReservation;
-                postData.Nb_pers_transport = personnesNb;
-                postData.Nb_de_bagages = BagagesNb;
-                postData.Prix = prixTrajet;
-
-                
-                console.log(postData);
-
-
-                con.query('INSERT INTO Réservation_course SET ?', postData, (error, result) => {
-                    if (error) throw error;
-                });
-
             });
-            console.log(obj);
+            //console.log(obj);
 
         });
-
-
-        //calculate the price? calculate()
-        //store to DB reservation
-
-
     });
-
-
-    // res.json("ok");
 });
 
 

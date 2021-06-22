@@ -14,13 +14,13 @@ export class ReservationComponent implements OnInit {
     
   }
 
-
-  //Question
-  startAdress : string | undefined;
+  DonneesRes : any = [];
   
   //question reset form
   getValues(val: object){
-    this.comService.getAdresseDepart(val).subscribe(res => console.log(res));
+    this.DonneesRes = [];
+    this.comService.getAdresseDepart(val).subscribe(res => this.DonneesRes.push(res));
+    console.log(this.DonneesRes);
   }
 
 }

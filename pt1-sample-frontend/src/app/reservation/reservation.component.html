@@ -6,6 +6,18 @@
 <form #reservationForm = "ngForm" (ngSubmit) = "getValues(reservationForm.value)" >
   <div class="form-group">
 
+    <label for="nom">Nom : </label>
+    <input required ngModel name = "nom" #nom="ngModel" class="form-control" type="text" id="nom" value="Veillez entrer votre Nom">
+    <div class="alert alert-danger" *ngIf="nom.touched && !nom.valid">le nom est obligatoire!</div>
+
+    <label for="prenom">Prenom : </label>
+    <input required ngModel name = "prenom" #prenom="ngModel" class="form-control" type="text" id="prenom" value="Veillez entrer votre prenom">
+    <div class="alert alert-danger" *ngIf="prenom.touched && !prenom.valid">le prenom est obligatoire!</div>
+
+    <label for="age">Age : </label>
+    <input required ngModel name = "age" #age="ngModel" class="form-control" type="text" id="age" value="Veillez entrer votre age">
+    <div class="alert alert-danger" *ngIf="depart.touched && !depart.valid">L'adresse d'entrée est obligatoire!</div>
+
     <label for="depart">Point de depart : </label>
     <input required ngModel name = "depart" #depart="ngModel" class="form-control" type="text" id="depart" value="Veillez entrer votre point de depart">
     <div class="alert alert-danger" *ngIf="depart.touched && !depart.valid">L'adresse d'entrée est obligatoire!</div>
@@ -41,3 +53,15 @@
 
   <button class="btn btn-primary" id = "submit">Submit</button>
 </form>
+
+<br>
+<br>
+<br>
+
+<div *ngFor="let res of DonneesRes[0]">
+  <div>
+    Votre numero de reservation : <b>{{res.Idr}}</b> <br>
+    Votre numero de Client : <b>{{res.Idc }}</b><br />
+  </div>
+  <hr>
+</div>
