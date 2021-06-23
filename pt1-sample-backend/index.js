@@ -36,6 +36,7 @@ server.listen(3000, function () {
 
 
 const mysql = require('mysql');
+const { post } = require('request');
 
 if (!process.env.DB_USER || !process.env.DB_PASS) {
     console.log("User/pass don't set in the .env file");
@@ -254,7 +255,7 @@ app.post('/getData', function (req, res) {
 
             itineraire = obj;
 
-            con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage='" + BagagesNb + "'", (error, result) => {
+            con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage>='" + BagagesNb + "' AND Nombre_de_place >= '" + personnesNb + "'", (error, result) => {
 
                 var taxiKeyverif;
 
@@ -322,7 +323,10 @@ app.post('/getData', function (req, res) {
                     postData.N_reservation = IDReservation;
                     postData.Nb_pers_transport = personnesNb;
                     postData.Nb_de_bagages = BagagesNb;
+                    postData.Depart = depart;
+                    postData.Arrive = arrival;
                     postData.Prix = prixTrajet;
+                    postData.Distance = distanceTraj;
     
                     
                     console.log(postData);
@@ -330,6 +334,9 @@ app.post('/getData', function (req, res) {
                     con.query('INSERT INTO Réservation_course SET ?', postData, (error, result) => {
                         if (error) throw error;
                         taxiDispo["Taxi_" + taxiSelectId].taxiDispo = false;
+                        taxiPosition["Taxi_" + taxiSelectId].lon = longitudeArrive;
+                        taxiPosition["Taxi_" + taxiSelectId].lat = latitudeArrive;
+                        console.log(taxiPosition);
                     });
 
                     InfoCli = [{
@@ -339,7 +346,6 @@ app.post('/getData', function (req, res) {
                     res.json(InfoCli);
                 }
             });
-            //console.log(obj);
 
         });
     });
@@ -351,8 +357,9 @@ app.post('/getData', function (req, res) {
 app.post('/getDispo', function (req, res) {
     classe = req.body.ClassSelect;
     BagagesNb = req.body.BagagesNb;
+    personnesNb = req.body.personnesNb;
 
-    con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage='" + BagagesNb + "'", (error, result) => {
+    con.query("SELECT * FROM Taxi WHERE Classe ='" + classe + "' AND Espace_bagage>='" + BagagesNb + "' AND Nombre_de_place >= '" + personnesNb + "'", (error, result) => {
         if (error) throw error;
         var resultArray = Object.values(JSON.parse(JSON.stringify(result)));
         var FinalResult = [];
@@ -365,7 +372,64 @@ app.post('/getDispo', function (req, res) {
             FinalResult.push(element);
         }
     }
+    if(FinalResult.length === 0){
+        reponse = [{
+            Marque : "Pas de taxi dispnible selon vos selections"
+        }]
+        res.json(reponse);
+    }else {
         res.json(FinalResult);
+    }
+    });
+});
+
+//confimer une reservation 
+
+app.post('/confirmReservation', function (req, res) {
+
+    console.log(req.body);
+    IDClient = req.body.IDClient;
+    IDReservation = req.body.IDReservation;
+
+    console.log(IDClient);
+
+    con.query("SELECT * FROM Réservation_course WHERE N_idclient ='" + IDClient + "' AND N_reservation ='" + IDReservation + "'", (error, result) => {
+        if (error) throw error;
+        var resultArray = Object.values(JSON.parse(JSON.stringify(result)));
+        var reponse = [];
+        console.log(resultArray);
+
+        if(resultArray.length === 0){
+            reponse = [{
+                reponse : "cette reservation n'existe pas, veillez verifier vos informations"
+            }]
+            res.json(reponse);
+        }else {
+
+            Idtaxi = "Taxi_" + resultArray[0].N_taxi;
+
+            taxiDispo[Idtaxi].taxiDispo = true;
+
+            let postData = {};
+
+            courseID = IDReservation;
+    
+    
+            postData.N_course = courseID;
+            postData.N_Reservation = IDReservation;
+            postData.N_Client = IDClient;
+    
+            con.query('INSERT INTO Course SET ?', postData, (error, result) => {
+                if (error) throw error;
+            });
+            
+            reponse = [{
+                reponse : "Votre reservation a été comfimé"
+            }]
+            
+            res.json(reponse);
+        }
+
     });
 });
 
@@ -388,41 +452,3 @@ app.post('/addReservation', function (req, res) {
     });
 });
 
-
-// Not app
-app.get('/allPeople', function (req, res) {
-    con.query('SELECT * FROM person', (error, result) => {
-        if (error) throw error;
-        res.json(result);
-    });
-});
-
-app.get('/person/:id', function (req, res) {
-    con.query('SELECT * FROM person where id=?', [req.params.id], (error, result) => {
-        if (error) throw error;
-        res.json(result);
-    });
-});
-
-app.post('/addPerson', function (req, res) {
-    let postData = req.body;
-    con.query('INSERT INTO person SET ?', postData, (error, result) => {
-        if (error) throw error;
-        res.send(result);
-    });
-});
-
-app.put('/updatePerson/:id', function (req, res) {
-    con.query('UPDATE person SET name=?, lastName=?, age=? where id=?', [req.body.name, req.body.lastName, req.body.age, req.params.id],
-        (error, result) => {
-            if (error) throw error;
-            res.send(result);
-        });
-});
-
-app.delete('/deletePerson/:id', function (req, res) {
-    con.query('DELETE FROM person WHERE id=?', [req.params.id], (error, result) => {
-        if (error) throw error;
-        res.send('Number of records deleted: ' + result.affectedRows);
-    });
-});

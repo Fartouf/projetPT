@@ -4,17 +4,16 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class ComServiceService {
+export class ConfirmationService {
+
 
   serviceUrl = "http://localhost:3000";
 
   constructor(private http: HttpClient) {
   }
 
-  //envoyer les données
-  getAdresseDepart(data : any) {
-    console.log(data);
+  confirmReservation(data : any) {
     return this.http.post<any[]>
-    (this.serviceUrl + "/getData", data);
+    (this.serviceUrl + "/confirmReservation", data);
   }
 }

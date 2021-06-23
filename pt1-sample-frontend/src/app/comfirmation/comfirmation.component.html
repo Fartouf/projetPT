@@ -1,0 +1,29 @@
+<h2>Conformation</h2>
+
+<p>Veiller entrer les informations relatives à votre reservation</p>
+
+<form #confirmationForm ="ngForm" (ngSubmit) = "confirmation(confirmationForm.value)">
+    <div class="form-group">
+
+        <label for="IDClient">IDClient : </label>
+        <input required ngModel name="IDClient" #IDClient="ngModel" class="form-control" type="text" id="nom"
+            value="Veillez entrer IDClient">
+        <div class="alert alert-danger" *ngIf="IDClient.touched && !IDClient.valid">IDClient est obligatoire!</div>
+
+        <label for="IDReservation">IDReservation : </label>
+        <input required ngModel name="IDReservation" #IDReservation="ngModel" class="form-control" type="text"
+            id="IDReservation" value="Veillez entrer votre IDReservation">
+        <div class="alert alert-danger" *ngIf="IDReservation.touched && !IDReservation.valid">IDReservation est
+            obligatoire!</div>
+    </div>
+
+    <button class="btn btn-primary" id="submit">Submit</button>
+</form>
+<br>
+<br>
+<br>
+<div *ngFor="let element of reponse[0]">
+    <div><b>{{element.reponse}}</b>
+    </div>
+    <hr>
+  </div>

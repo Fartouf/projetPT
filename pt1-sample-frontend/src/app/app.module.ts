@@ -14,6 +14,7 @@ import { ReservationComponent } from './reservation/reservation.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { DisponibiliteComponent } from './disponibilite/disponibilite.component';
+import { ComfirmationComponent } from './comfirmation/comfirmation.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DisponibiliteComponent } from './disponibilite/disponibilite.component'
     UserComponent,
     TaxiComponent,
     ReservationComponent,
-    DisponibiliteComponent
+    DisponibiliteComponent,
+    ComfirmationComponent
   ],
   imports: [
     BrowserModule,

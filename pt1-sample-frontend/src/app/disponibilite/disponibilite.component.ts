@@ -19,7 +19,6 @@ export class DisponibiliteComponent implements OnInit {
 
     this.disponibilite = [];
     this.dispService.getDispo(val).subscribe(res => this.disponibilite.push(res));
-    console.log(this.disponibilite);
   }
 
 }
