@@ -374,7 +374,7 @@ app.post('/getDispo', function (req, res) {
     }
     if(FinalResult.length === 0){
         reponse = [{
-            Marque : "Pas de taxi dispnible selon vos selections"
+            Marque : "Pas de taxi disponible selon vos selections"
         }]
         res.json(reponse);
     }else {
@@ -416,7 +416,6 @@ app.post('/confirmReservation', function (req, res) {
     
     
             postData.N_course = courseID;
-            postData.N_Reservation = IDReservation;
             postData.N_Client = IDClient;
     
             con.query('INSERT INTO Course SET ?', postData, (error, result) => {
