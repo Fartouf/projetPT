@@ -1,3 +1,13 @@
+module.exports = {
+    verifPrix : function(nmKM, classe, nbBagages, nbPassagers, heureTrajet){
+        return price(nmKM, classe, nbBagages, nbPassagers, heureTrajet);
+    },
+
+    getDist : function(longitudeDepart, latitudeDepart, longitudeArrive, latitudeArrive){
+        return getDist(longitudeDepart, latitudeDepart, longitudeArrive, latitudeArrive);
+    }
+}
+
 require('dotenv').config()
 const express = require('express');
 
@@ -110,7 +120,7 @@ function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
     var prix = 0;
     var prixCoef = 1;
 
-    if (heureTrajet >= 18 && heureTrajet <= 8) {
+    if ((heureTrajet >= 18 && heureTrajet <= 24) ||(heureTrajet >= 0 && heureTrajet <= 8)) {
         prixCoef = 1.2;
     }
 
@@ -118,15 +128,15 @@ function price(nmKM, classe, nbBagages, nbPassagers, heureTrajet) {
 
         case 1:
             prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) * 1.5 + prixPriseEnCharge;
-            return prix;
+            return prix.toPrecision(2);
 
         case 2:
             prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) * 1.2 + prixPriseEnCharge;
-            return prix;
+            return prix.toPrecision(2);
 
         case 3:
             prix = (nbBagages * prixParBagage + nbPassagers * (nmKM * prixParKm * prixCoef)) + prixPriseEnCharge;
-            return prix;
+            return prix.toPrecision(2);
 
         default:
             console.log("erreur au niveau du prix")
@@ -220,14 +230,7 @@ function getDist(longitudeDepart, latitudeDepart, longitudeArrive, latitudeArriv
 
 }
 
-//choix du taxi le plus proche
 
-function taxiselect(taxiPosition, depart) {
-
-    var minDist;
-    var taxiNb;
-
-}
 
 app.post('/getData', function (req, res) {
     var IDReservation;
@@ -286,7 +289,6 @@ app.post('/getData', function (req, res) {
                     for (const element of FinalResult) {
                         var temp = [];
                         taxiKeyverif = "Taxi_" + element.N_taxi;
-                        console.log
     
                         if (minDist > getDist(longitudeDepart, latitudeDepart, taxiPosition[taxiKeyverif].lon, taxiPosition[taxiKeyverif].lat) / 1000) {
                             

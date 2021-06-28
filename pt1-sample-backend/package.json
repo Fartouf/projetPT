@@ -5,8 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node_modules/.bin/nodemon index.js",
-        "startTaxi": "node_modules/.bin/nodemon taxi.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "mocha || true"
     },
     "repository": {
         "type": "git",
@@ -28,5 +27,9 @@
         "request": "^2.88.2",
         "socket.io": "^4.0.1",
         "url-parse": "^1.5.1"
+    },
+    "devDependencies": {
+        "chai": "^4.3.4",
+        "mocha": "^9.0.1"
     }
 }
