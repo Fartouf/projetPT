@@ -1,5 +1,4 @@
 const assert = require('chai').assert;
-//const app = require('../index');
 const verifPrix = require('../index').verifPrix;
 const getDist = require('../index').getDist;
 
@@ -7,7 +6,10 @@ const getDist = require('../index').getDist;
 describe('App', function(){
     it('priceCheck', function(){
         let result = verifPrix(1,1,1,1,1);
+        let result2 = verifPrix(1,1,1,1,9);
         assert.equal(result, 9.6);
+        assert.equal(result2, 9.0);
+
     });
 
     it('DistCheck', function(){
